@@ -11,7 +11,7 @@ $Head_ridotto=<<<EOD
  	<link rel="stylesheet" href="{$BASE_URL}/css/style.css">
   	<script type="text/javascript" src="{$BASE_URL}/js/bsn.AutoSuggest_c_2.0.js"></script>
 	<link rel="stylesheet" href="{$BASE_URL}/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />
-	<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
+	<script type='text/javascript' src='{$BASE_URL}/js/jquery-1.9.1.js'></script>
 <body $css_class>
 
 EOD;
