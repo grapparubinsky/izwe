@@ -1,0 +1,11 @@
+Options Indexes FollowSymLinks
+
+# turn rewrite engine on #
+RewriteEngine On
+
+# ##
+RewriteRule ^status$ status.php [L]
+RewriteRule ^registro$ registro.php [L]
+RewriteRule ^cronologia$ cronologia.php [L]
+RewriteRule ^view$ view.php [L,QSA]
+RewriteRule ^consigliere$ uscita.php [L,QSA]
