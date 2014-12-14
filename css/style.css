@@ -64,7 +64,7 @@ h1, h2, h3, h4, h5 {
 	display:block;
 	max-width:1024px;
 	min-width:850px;
-	margin:0 auto;
+	margin:0 1em;
 }
 .rowbtn {
 	background:#26AA4E;
@@ -132,7 +132,7 @@ summary h2 {
 #content-wrapper {
 	max-width:1024px;
 	min-width:850px;
-	margin:0 auto;
+	margin:0 1em;
 }
 input {
 font-family:'BrandonText-Bold';
