@@ -181,7 +181,7 @@ EOD;
 	
 	$add="";
 	if(!empty($_GET['territorio_n'])) {
-		$add.= "WHERE territorio_n = '{$_GET['territorio_n']}";
+		$add.= "WHERE territorio_n = '{$_GET['territorio_n']}'";
 	}
 		if(!empty($_GET['data_uscita']) && !empty($_GET['data_rientro'])) {
 				$add.="AND data_uscita BETWEEN date('{$_GET['data_uscita']}') AND date('{$_GET['data_rientro']}') AND data_rientro BETWEEN date('{$_GET['data_uscita']}') AND date('{$_GET['data_rientro']}')";
@@ -193,6 +193,8 @@ EOD;
 				$add.="AND data_rientro = '{$_GET['data_rientro']}'";
 			}
 		}
+// echo "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC";
+
 		$sel_terr=mysqli_query($mysqli, "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC") or die(mysqli_error($mysqli));	
 			$table="";
 			while($t=mysqli_fetch_assoc($sel_terr)){
