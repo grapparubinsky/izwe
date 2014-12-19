@@ -26,13 +26,14 @@ $p=$_GET;
 		}
 			
 		$upd=mysqli_query($mysqli, "INSERT INTO 
-			registro ({$id['add'][$i]} id_p, territorio_n, data_uscita, data_rientro, registered, note)
-			VALUES ({$id['value'][$i]} '{$p['id_p'][$i]}', '{$p['territorio_n'][$i]}', '{$p['data_uscita'][$i]}', '{$p['data_rientro'][$i]}', b'{$p['registered'][$i]}', '{$p['note'][$i]}')
+			registro ({$id['add'][$i]} id_p, territorio_n, data_uscita, r_uscita, data_rientro, r_rientro, note)
+			VALUES ({$id['value'][$i]} '{$p['id_p'][$i]}', '{$p['territorio_n'][$i]}', '{$p['data_uscita'][$i]}', '{$p['r_uscita'][$i]}', '{$p['data_rientro'][$i]}', '{$p['r_rientro'][$i]}', '{$p['note'][$i]}')
 				ON DUPLICATE KEY 
 				UPDATE 
 					data_uscita = '{$p['data_uscita'][$i]}',
+					r_uscita = '{$p['r_uscita'][$i]}',
 					data_rientro = '{$p['data_rientro'][$i]}',
-					registered = b'{$p['registered'][$i]}',
+					r_rientro = '{$p['r_rientro'][$i]}',
 					note = '{$p['note'][$i]}'") or die(mysqli_error($mysqli));
 
 			
@@ -99,17 +100,22 @@ elseif(!empty($_GET['id_p'])) {
 					echo '<i>Nessun territorio assegnato a questo proclamatore.</i>';
 				} else {
 			
-								if($r['registered'] == '0') $registered_check='';
-							else $registered_check = 'checked';
+								if($r['r_uscita'] == '0') $r_uscita_check='';
+							else $r_uscita_check = 'checked';
+							
+								if($r['r_rientro'] == '0') $r_rientro_check='';
+							else $r_rientro_check = 'checked';
 							
 			$table.=<<<EOD
 							<tr>
 								<td><b onclick="return popitup('{$BASE_URL}/view?territorio_n={$r['territorio_n']}')">{$r['territorio_n']} </b>
 								<td>{$p['nome']} {$p['cognome']} 
 								<td><input type="date"  name="data_uscita[$w]" value="{$r['data_uscita']}" min="0" placeholder="Data uscita"></td>
+								<input type="hidden" name="r_uscita[$w]" value="0">
+								<td><input type="checkbox"  name="r_uscita[$w]" value="1" $r_uscita_check></td>
 								<td><input type="date"  name="data_rientro[$w]" value="{$r['data_rientro']}" min="0" placeholder="Data rientro"></td> 
-								<input type="hidden" name="registered[$w]" value="0">
-								<td><input type="checkbox"  name="registered[$w]" value="1" $registered_check></td>
+								<input type="hidden" name="r_rientro[$w]" value="0">
+								<td><input type="checkbox"  name="r_rientro[$w]" value="1" $r_rientro_check></td>
 								<td><input type="text"  name="note[$w]" value="{$r['note']}" min="0" placeholder="Note"></td>
 								<td>{$r['id']}</td>
 								<input type="hidden" name="delete[$w]" value="0">
@@ -132,8 +138,9 @@ $w='0';
 			<th width="50">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="220">Data uscita</th>
+			<th>R</th>
 			<th width="220">Data rientro</th>
-			<th>Registro</th>
+			<th>R</th>
 			<th>Note</th>
 			<th width="25">ID</th>
 			<th>Elimina</th>
@@ -149,8 +156,7 @@ $w='0';
 			<th width="50">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="220">Data uscita</th>
-			<th width="220">Data rientro</th>
-			<th>Registro</th>
+			<th width="40">R</th>
 			<th>Note</th>
 			
 			<th>Registra</th>
@@ -159,9 +165,8 @@ $w='0';
 								<td><input type="text"  name="territorio_n[$w]" value="" min="1" placeholder="N°"></td>
 								<td>{$p['nome']} {$p['cognome']} 
 								<td><input type="date"  name="data_uscita[$w]" value="" min="0" placeholder="Data uscita"></td>
-								<td><input type="date"  name="data_rientro[$w]" value="" min="0" placeholder="Data rientro"></td> 
-									<input type="hidden" name="registered[$w]" value="0">
-								<td><input type="checkbox"  name="registered[$w]" value="1"></td>
+								<input type="hidden" name="r_uscita[$w]" value="0">
+								<td><input type="checkbox"  name="r_uscita[$w]" value="1"></td>
 								<td><input type="text"  name="note[$w]" value="" min="0" placeholder="Note"></td>
 							
 								 <td> <input type="button" class="btn btn-success" onclick="return AddRecord();" value="Registra"></td>
@@ -195,7 +200,7 @@ EOD;
 		}
 // echo "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC";
 
-		$sel_terr=mysqli_query($mysqli, "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC") or die(mysqli_error($mysqli));	
+		$sel_terr=mysqli_query($mysqli, "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r.r_uscita, r.r_rientro, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC") or die(mysqli_error($mysqli));	
 			$table="";
 			while($t=mysqli_fetch_assoc($sel_terr)){
 				if(empty($t)) {
@@ -204,16 +209,21 @@ EOD;
 									
 						if($t['data_rientro'] == '00-00-0000' || empty($t['data_rientro'])) $rientro="<span style='color:green;font-weight:bold'>FUORI</span>";		
 							else $rientro = $t['data_rientro'];						
-						if($t['registered'] == '0') $registered='<b style="color:red">NO</b>';
-							else $registered = 'SI';
+						if($t['r_uscita'] == '0') $r_uscita='<b style="color:red">NO</b>';
+							else $r_uscita = 'SI';
+							
+						if($t['data_rientro'] == '00-00-0000') { $r_rientro = '-'; }
+						elseif($t['r_rientro'] == '0' && $t['data_rientro'] !== '0000-00-00') { $r_rientro='<b style="color:red">NO</b>'; }
+						else { $r_rientro = 'SI'; } 
 							
 			$table.=<<<EOD
 							<tr>
 								<td><b onclick="return popitup('{$BASE_URL}/view?territorio_n={$t['territorio_n']}')">{$t['territorio_n']} </b>
 								<td>{$t['nome']} {$t['cognome']} 
 								<td>{$t['data_uscita']}</td>
+								<td>$r_uscita</td>
 								<td>$rientro</td> 
-								<td>$registered</td>
+								<td>$r_rientro</td>
 								<td>{$t['note']}</td>
 								<td>{$t['id']}</td>
 							</tr>
@@ -227,8 +237,9 @@ EOD;
 			<th width="50">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="220">Data uscita</th>
+			<th>R</th>
 			<th width="220">Data rientro</th>
-			<th>Registro</th>
+			<th>R</th>
 			<th>Note</th>
 			<th width="25">ID</th>
 		</tr>
@@ -242,7 +253,7 @@ EOD;
 
 	if(isset($_GET['not_registered'])) {
 		$campi_add="";
-		$add= "WHERE registered = '0'";
+		$add= "WHERE r_uscita = '0' || r_rientro = '0' AND data_rientro != '0000-00-00'";
 		$orderby="territorio_n ASC";
 		$sqlexec='1';
 	}
@@ -257,32 +268,61 @@ EOD;
 			$add= "WHERE (data_rientro IS NULL OR data_rientro = '0000-00-00') AND DATEDIFF(data_uscita, NOW()) <= '-115'";
 			$orderby="uscito_da_gg DESC";
 			$sqlexec='1';
+			
 		}
 
 		if($sqlexec=='1') {
 		$sel_terr=mysqli_query($mysqli, "SELECT r.id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, 
-		DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.id, p.nome, p.cognome{$campi_add} 
+		DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r_uscita, r_rientro, note, p.id, p.nome, p.cognome{$campi_add} 
 		FROM registro AS r JOIN proclamatori AS p ON r.id_p = p.id
 		$add 
 		ORDER BY $orderby") or die(mysqli_error($mysqli));	
+
 			while($t=mysqli_fetch_assoc($sel_terr)){
 				if(empty($t)) {
 					echo '<i>Nada de nada.</i>';
 				} else {
-									
 						if($t['data_rientro'] == '00-00-0000' || empty($t['data_rientro'])) $rientro="<span style='color:green;font-weight:bold'>FUORI</span>";		
 							else $rientro = $t['data_rientro'];						
-						if($t['registered'] == '0') $registered='<b style="color:red">NO</b>';
-							else $registered = 'SI';
+						if($t['r_uscita'] == '0') $r_uscita='<b style="color:red">NO</b>';
+							else $r_uscita = 'SI';
 							
+						if($t['r_rientro'] == '0' && $t['data_rientro'] !== '0000-00-00') { $r_rientro='<b style="color:red">NO</b>'; }
+						elseif($t['r_rientro'] == '0' && $t['data_rientro'] == '0000-00-00'){ $r_rientro = '-'; }
+						else { $r_rientro = 'SI'; } 
+							
+							
+							if(isset($_GET['not_registered'])) {
+								$table_th='<th width="220">Data rientro</th>';
+								$table_th.='<th>R</th>';
+								$table_td="<td>$rientro</td> ";
+								$table_td.="<td>$r_rientro</td>";
+							}
+							
+							if(isset($_GET['in_scadenza'])) {
+								$now=date('d-m-Y');
+								
+									$diff=Diff_Date($t['data_uscita'], $now);
+								
+								$table_th='<th>Fuori da..</th>';
+								$table_td="<td>{$diff}</td>";
+							}
+							if(isset($_GET['scaduti'])) {
+								$now=date('d-m-Y');
+								
+									$diff=Diff_Date($t['data_uscita'], $now);
+								
+								$table_th='<th>Fuori da..</th>';
+								$table_td="<td>{$diff}</td>";
+							}
 			$table.=<<<EOD
 							<tr>
 								<td><b onclick="return popitup('{$BASE_URL}/view?territorio_n={$t['territorio_n']}')">{$t['territorio_n']} </b>
 								<td>{$t['nome']} {$t['cognome']} 
 								<td>{$t['data_uscita']}</td>
-								<td>$rientro</td> 
-								<td>$registered</td>
-								<td>{$t['uscito_da_gg']}</td>
+								<td>$r_uscita</td>
+								$table_td
+								<td>{$t['note']}</td>
 								<td>{$t['id']}</td>
 							</tr>
 EOD;
@@ -295,8 +335,8 @@ EOD;
 			<th width="50">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="220">Data uscita</th>
-			<th width="220">Data rientro</th>
-			<th>Registro</th>
+			<th>R</th>
+			$table_th
 			<th>Note</th>
 			<th width="25">ID</th>
 		</tr>
