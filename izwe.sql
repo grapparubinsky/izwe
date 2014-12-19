@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 11, 2014 at 12:03 AM
+-- Generation Time: Dec 19, 2014 at 03:27 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.5.9-1ubuntu4.5
 
@@ -81,15 +81,16 @@ CREATE TABLE IF NOT EXISTS `registro` (
   `id_p` int(10) NOT NULL,
   `territorio_n` varchar(10) NOT NULL,
   `data_uscita` date NOT NULL,
+  `r_uscita` int(10) unsigned NOT NULL,
   `data_rientro` date DEFAULT NULL,
-  `registered` bit(1) NOT NULL,
+  `r_rientro` int(10) unsigned NOT NULL,
   `note` mediumtext NOT NULL,
   `last_edit` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `keynice` (`id`,`territorio_n`,`data_uscita`),
   KEY `territorio_n` (`territorio_n`),
   KEY `id_p` (`id_p`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=520 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 
