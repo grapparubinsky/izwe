@@ -46,7 +46,7 @@ $p=$_GET;
 } 
 if(isset($_GET['priorita'])) {
 
-		$upd=mysqli_query($mysqli, "SELECT t.id, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.id = r.territorio_n where t.id NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}' ORDER BY `r`.`data_rientro` ASC LIMIT 15") or die(mysqli_error($mysqli));
+		$upd=mysqli_query($mysqli, "SELECT t.n, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}' ORDER BY `r`.`data_rientro` ASC LIMIT 15") or die(mysqli_error($mysqli));
 		
 			while($t=mysqli_fetch_assoc($upd)){
 				if(empty($t)) {
