@@ -60,7 +60,7 @@ if(isset($_GET['priorita'])) {
 					//	print_r($t);	
 			$table.=<<<EOD
 							<tr>
-								<td><b onclick="return popitup_territorio('{$BASE_URL}/view?territorio_n={$t['id']}')">{$t['id']} </b>
+								<td><b onclick="return popitup_territorio('{$BASE_URL}/view?territorio_n={$t['n']}')">{$t['n']} </b>
 								<td>$rientro </td> 
 								<td>$note</td>
 							</tr>
