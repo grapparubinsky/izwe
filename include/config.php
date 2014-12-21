@@ -11,3 +11,4 @@ if (mysqli_connect_errno()) {
         exit();
  
 }
+date_default_timezone_set('Europe/Berlin');
