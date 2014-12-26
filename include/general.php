@@ -40,8 +40,8 @@ function popitup(url) {
 }
 
 function popitup_territorio(url) {
-	newwindow2=window.open(url,'territorio','height=451,width=635');
-	newwindow2.moveTo(300,100);
+	newwindow2=window.open(url,'territorio','height=400,width=580');
+	//newwindow2.moveTo(100,0);
 	if (window.focus) {newwindow2.focus()}
 	return false;
 }
