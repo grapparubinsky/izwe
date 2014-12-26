@@ -20,6 +20,7 @@ if(!isset($_POST['id'])) {
 		   	<input type="checkbox" name="not_registered" value="">Da registrare <br />
 		   	<input type="checkbox" name="in_scadenza" value="">In Scadenza <br />
 		   	<input type="checkbox" name="scaduti" value="">Scaduti <br />
+		   	<input type="checkbox" name="in_giacenza" value="">In giacenza<br />
 		    <input type="button" class="btn btn-success" onclick="return submitForm();" value="Seleziona">
 	   	 </form>
 	   	</section>
