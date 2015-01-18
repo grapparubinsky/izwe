@@ -9,6 +9,8 @@ $_js="\$";
 if(isset($_GET['insert'])) {
 $p=$_GET;
 	
+	//print_r($GLOBALS);
+	
 	if(isset($p['id'])) {
 		$caunt=count($p['id']);
 	
@@ -25,15 +27,30 @@ $p=$_GET;
 			$id['add']='';
 			$id['value'][$i] ='';
 		}
-			
-		$upd=mysqli_query($mysqli, "INSERT INTO 
+		
+		
+		$ts_data_uscita=date('Y-m-d', strtotime($p['data_uscita'][$i]));
+		$ts_data_rientro=date('Y-m-d', strtotime($p['data_rientro'][$i]));
+		
+			echo "INSERT INTO 
 			registro ({$id['add'][$i]} id_p, territorio_n, data_uscita, r_uscita, data_rientro, r_rientro, note)
-			VALUES ({$id['value'][$i]} '{$p['id_p'][$i]}', '{$p['territorio_n'][$i]}', '{$p['data_uscita'][$i]}', '{$p['r_uscita'][$i]}', '{$p['data_rientro'][$i]}', '{$p['r_rientro'][$i]}', '{$p['note'][$i]}')
+			VALUES ({$id['value'][$i]} '{$p['id_p'][$i]}', '{$p['territorio_n'][$i]}', '{$ts_data_uscita}', '{$p['r_uscita'][$i]}', '{$ts_data_rientro}', '{$p['r_rientro'][$i]}', '{$p['note'][$i]}')
 				ON DUPLICATE KEY 
 				UPDATE 
-					data_uscita = '{$p['data_uscita'][$i]}',
+					data_uscita = '{$ts_data_uscita}',
 					r_uscita = '{$p['r_uscita'][$i]}',
-					data_rientro = '{$p['data_rientro'][$i]}',
+					data_rientro = '{$ts_data_rientro}',
+					r_rientro = '{$p['r_rientro'][$i]}',
+					note = '{$p['note'][$i]}'";
+		
+		$upd=mysqli_query($mysqli, "INSERT INTO 
+			registro ({$id['add'][$i]} id_p, territorio_n, data_uscita, r_uscita, data_rientro, r_rientro, note)
+			VALUES ({$id['value'][$i]} '{$p['id_p'][$i]}', '{$p['territorio_n'][$i]}', '{$ts_data_uscita}', '{$p['r_uscita'][$i]}', '{$ts_data_rientro}', '{$p['r_rientro'][$i]}', '{$p['note'][$i]}')
+				ON DUPLICATE KEY 
+				UPDATE 
+					data_uscita = '{$ts_data_uscita}',
+					r_uscita = '{$p['r_uscita'][$i]}',
+					data_rientro = '{$ts_data_rientro}',
 					r_rientro = '{$p['r_rientro'][$i]}',
 					note = '{$p['note'][$i]}'") or die(mysqli_error($mysqli));
 
@@ -102,7 +119,7 @@ elseif(!empty($_GET['id_p']) || $_GET['id_p'] == '0') {
 		//print_r($p);
 	
 		$w=0;
-		$sel_reg=mysqli_query($mysqli, "SELECT * FROM registro WHERE id_p = '{$p['id']}' ORDER BY data_rientro DESC");	
+		$sel_reg=mysqli_query($mysqli, "SELECT * FROM registro WHERE id_p = '{$p['id']}' ORDER BY data_uscita DESC");	
 			while($r=mysqli_fetch_assoc($sel_reg)){
 				if(empty($r)) {
 					echo '<i>Nessun territorio assegnato a questo proclamatore.</i>';
@@ -257,27 +274,32 @@ EOD;
 	
 EOD;
 } elseif(isset($_GET['status']) && !isset($_GET['in_giacenza'])) {
-	
+	$w=0;
+	$table="";
 
 	if(isset($_GET['not_registered'])) {
+		$update='onchange="return UpdateRecord();"';
 		$campi_add="";
 		$add= "WHERE r_uscita = '0' || r_rientro = '0' AND data_rientro != '0000-00-00'";
-		$orderby="territorio_n ASC";
+		$orderby="territorio_n+0 ASC";
 		$sqlexec='1';
 	}
 	elseif(isset($_GET['in_giacenza'])) {
+		$update='';
 		$campi_add="";
 		$add= "WHERE data_rientro <= NOW() AND data_rientro != '00-00-0000'";
 		$orderby="data_rientro DESC";
 		$sqlexec='1';
 	}
 	elseif(isset($_GET['in_scadenza'])) {
+		$update='';
 			$campi_add=", DATEDIFF(data_uscita, NOW()) as uscito_da_gg";
 			$add= "WHERE (data_rientro IS NULL OR data_rientro = '0000-00-00') AND (DATEDIFF(data_uscita, NOW()) BETWEEN '-115' AND '-90')";
 			$orderby="uscito_da_gg DESC";
 			$sqlexec='1';
 		}
 	elseif(isset($_GET['scaduti'])) {
+		$update='';
 			$campi_add=", DATEDIFF(data_uscita, NOW()) as uscito_da_gg";
 			$add= "WHERE (data_rientro IS NULL OR data_rientro = '0000-00-00') AND DATEDIFF(data_uscita, NOW()) <= '-115'";
 			$orderby="uscito_da_gg DESC";
@@ -287,7 +309,7 @@ EOD;
 
 		if($sqlexec=='1') {
 		
-		$sel_terr=mysqli_query($mysqli, "SELECT r.id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, 
+		$sel_terr=mysqli_query($mysqli, "SELECT r.id as rid, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, 
 		DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r_uscita, r_rientro, note, p.id, p.nome, p.cognome{$campi_add} 
 		FROM registro AS r JOIN proclamatori AS p ON r.id_p = p.id
 		$add 
@@ -297,6 +319,7 @@ EOD;
 				if(empty($t)) {
 					echo '<i>Nada de nada.</i>';
 				} else {
+					
 						if($t['data_rientro'] == '00-00-0000' || empty($t['data_rientro'])) $rientro="<span style='color:green;font-weight:bold'>FUORI</span>";		
 							else $rientro = $t['data_rientro'];						
 						if($t['r_uscita'] == '0') $r_uscita='<b style="color:red">NO</b>';
@@ -305,52 +328,82 @@ EOD;
 						if($t['r_rientro'] == '0' && $t['data_rientro'] !== '0000-00-00') { $r_rientro='<b style="color:red">NO</b>'; }
 						elseif($t['r_rientro'] == '0' && $t['data_rientro'] == '0000-00-00'){ $r_rientro = '-'; }
 						else { $r_rientro = 'SI'; } 
-							
+						
+						
 							
 							if(isset($_GET['not_registered'])) {
-								$table_th='<th width="170">Data rientro</th>';
+									if($t['r_uscita'] == '0') $r_uscita_check='';
+							else $r_uscita_check = 'checked';
+							
+								if($t['r_rientro'] == '0') $r_rientro_check='';
+							else $r_rientro_check = 'checked';
+								
+								
+								$table_th='<th width="30">R</th>';
+								$table_th.='<th width="30">RX</th>';
+								$table_th.='<th width="170">Data rientro</th>';
 								$table_th.='<th width="30">R</th>';
-								$table_td="<td>$rientro</td> ";
-								$table_td.="<td>$r_rientro</td>";
+								$table_th.='<th width="30">RX</th>';
+								$table_td=<<<EOD
+								<td>$r_uscita</td>
+								<input type="hidden" name="r_uscita[$w]" value="{$t['r_uscita']}">
+											<td><input type="checkbox"  name="r_uscita[$w]" value="1" $r_uscita_check ></td>
+EOD;
+								$table_td.="<td>$rientro</td> ";
+								$table_td.=<<<EOD
+								<td>$r_rientro</td>
+								<input type="hidden" name="r_rientro[$w]" value="{$t['r_rientro']}">
+											<td><input type="checkbox"  name="r_rientro[$w]" value="1" $r_rientro_check ></td>
+
+								<input type="hidden" name="id_p[$w]" value="{$t['id_p']}">
+								<input type="hidden" name="territorio_n[$w]" value="{$t['territorio_n']}">
+								<input type="hidden" name="delete[$w]" value="0">
+								<input type="hidden"  name="note[$w]" value="{$t['note']}"></td>	
+								<input type="hidden" name="id[$w]" value="{$t['rid']}">
+								<input type="hidden"  name="data_rientro[$w]" value="{$t['data_rientro']}"></td>
+								<input type="hidden"  name="data_uscita[$w]" value="{$t['data_uscita']}"></td>
+EOD;
 							}
 							
 							if(isset($_GET['in_scadenza'])) {
 								$now=date('d-m-Y');
 								
 									$diff=Diff_Date($t['data_uscita'], $now);
-								
-								$table_th='<th>Fuori da..</th>';
-								$table_td="<td>{$diff}</td>";
+								$table_th='<th width="30">R</th>';
+								$table_th.='<th>Fuori da..</th>';
+								$table_td="<td>$r_uscita</td>";
+								$table_td.="<td>{$diff}</td>";
 							}
 							if(isset($_GET['scaduti'])) {
 								$now=date('d-m-Y');
 								
 									$diff=Diff_Date($t['data_uscita'], $now);
-								
-								$table_th='<th>Fuori da..</th>';
-								$table_td="<td>{$diff}</td>";
+								$table_th='<th width="30">R</th>';
+								$table_th.='<th>Fuori da..</th>';
+								$table_td="<td>$r_uscita</td>";
+								$table_td.="<td>{$diff}</td>";
 							}
 			$table.=<<<EOD
 							<tr>
 								<td><b onclick="return popitup('{$BASE_URL}/view?territorio_n={$t['territorio_n']}')">{$t['territorio_n']} </b>
 								<td>{$t['nome']} {$t['cognome']} 
 								<td>{$t['data_uscita']}</td>
-								<td>$r_uscita</td>
+								
 								$table_td
 								<td>{$t['note']}</td>
 								<td>{$t['id']}</td>
 							</tr>
 EOD;
+		$w++;
 		}
 	}	
 				echo $Content=<<<EOD
-	<form id="grigliainsert">
+	<form id="grigliainsert" $update>
 	<table style="table-layout:fixed; width:100%" cellspacing="0">
 		<tr>
 			<th width="50">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="170">Data uscita</th>
-			<th width="30">R</th>
 			$table_th
 			<th>Note</th>
 			<th width="25">ID</th>
