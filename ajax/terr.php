@@ -30,7 +30,12 @@ $p=$_GET;
 		
 		
 		$ts_data_uscita=date('Y-m-d', strtotime($p['data_uscita'][$i]));
+		
+		if($p['data_rientro'] == '00-00-0000') {
+		$ts_data_rientro='0000-00-00';
+		} else {
 		$ts_data_rientro=date('Y-m-d', strtotime($p['data_rientro'][$i]));
+		}
 		
 			echo "INSERT INTO 
 			registro ({$id['add'][$i]} id_p, territorio_n, data_uscita, r_uscita, data_rientro, r_rientro, note)
