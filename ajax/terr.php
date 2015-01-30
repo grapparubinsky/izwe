@@ -70,9 +70,9 @@ $p=$_GET;
 if(isset($_GET['priorita']) OR isset($_GET['in_giacenza'])) {
 
 	if(isset($_GET['priorita'])) {
-		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}' ORDER BY `r`.`data_rientro` ASC, censimento DESC LIMIT 15") or die(mysqli_error($mysqli));
+		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}'  GROUP BY `t`.`n` ORDER BY `r`.`data_rientro` ASC, censimento DESC LIMIT 15") or die(mysqli_error($mysqli));
 	}elseif(isset($_GET['in_giacenza'])) {
-		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) ORDER BY `t`.`n` + 0 ASC") or die(mysqli_error($mysqli));
+		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) GROUP BY `t`.`n` ORDER BY `t`.`n` + 0 ASC") or die(mysqli_error($mysqli));
 	}
 			while($t=mysqli_fetch_assoc($sel)){
 				if(empty($t)) {
