@@ -31,7 +31,7 @@ $p=$_GET;
 		
 		$ts_data_uscita=date('Y-m-d', strtotime($p['data_uscita'][$i]));
 		
-		if($p['data_rientro'][$i] == '00-00-0000') {
+		if($p['data_rientro'][$i] == '00-00-0000' || empty($p['data_rientro'][$i])) {
 		$ts_data_rientro='0000-00-00';
 		} else {
 		$ts_data_rientro=date('Y-m-d', strtotime($p['data_rientro'][$i]));
