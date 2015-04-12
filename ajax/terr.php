@@ -7,7 +7,7 @@ include('../include/functions.php');
 $_js="\$";
 
 if(isset($_GET['insert'])) {
-$p=$_GET;
+$p=$_POST;
 	
 	//print_r($GLOBALS);
 	

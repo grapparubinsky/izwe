@@ -42,7 +42,7 @@ if(!isset($_POST['id'])) {
 			}
 
 	function UpdateRecord() {
-			    $_js.ajax({type:'GET', url: 'ajax/terr.php?insert', data:$_js('#grigliainsert').serialize(), success: function(response) {
+			    $_js.ajax({type:'POST', url: 'ajax/terr.php?insert', data:$_js('#grigliainsert').serialize(), success: function(response) {
 			       
 			      
 			    }});
