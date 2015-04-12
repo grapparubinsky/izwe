@@ -70,7 +70,7 @@ $p=$_POST;
 if(isset($_GET['priorita']) OR isset($_GET['in_giacenza'])) {
 
 	if(isset($_GET['priorita'])) {
-		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}'  GROUP BY `t`.`n` ORDER BY `r`.`data_rientro` ASC, censimento DESC LIMIT 15") or die(mysqli_error($mysqli));
+		$sel=mysqli_query($mysqli, "SELECT  t.n, t.censimento, (SELECT MAX(data_rientro) FROM registro WHERE territorio_n = t.n GROUP BY territorio_n ORDER BY id DESC) as data_rientro, t.note FROM territori as t where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) AND `t`.`zona` = '{$_GET['zona']}'  GROUP BY `t`.`n` ORDER BY data_rientro ASC, censimento DESC LIMIT 15") or die(mysqli_error($mysqli));
 	}elseif(isset($_GET['in_giacenza'])) {
 		$sel=mysqli_query($mysqli, "SELECT t.n, t.censimento, r.data_rientro, t.note FROM territori as t LEFT JOIN registro as r ON t.n = r.territorio_n where t.n NOT IN (select territorio_n from `registro` WHERE (`data_rientro` IS  NULL OR `data_rientro` = '0000-00-00')) GROUP BY `t`.`n` ORDER BY `t`.`n` + 0 ASC") or die(mysqli_error($mysqli));
 	}
@@ -199,7 +199,7 @@ $w='0';
 								<td><input type="checkbox"  name="r_uscita[$w]" value="1"></td>
 								<td><input type="text"  name="note[$w]" value="" min="0" placeholder="Note" style="width:90%" style="width:90%"></td>
 							
-								 <td> <input type="button" class="btn btn-success" onclick="return AddRecord();" value="Registra"></td>
+								 <td> <input type="button" class="btn btn-success" onclick="AddRecord(); submitForm();" value="Registra"></td>
 								<input type="hidden" name="id_p[$w]" value="{$p['id']}">
 								<input type="hidden" name="delete[$w]" value="0">
 							</tr>
@@ -230,7 +230,7 @@ EOD;
 		}
 // echo "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, registered, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY data_uscita DESC";
 
-		$sel_terr=mysqli_query($mysqli, "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r.r_uscita, r.r_rientro, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY `r`.`data_uscita` DESC") or die(mysqli_error($mysqli));	
+		$sel_terr=mysqli_query($mysqli, "SELECT r.id as id, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r.r_uscita, r.r_rientro, note, p.nome, p.cognome FROM registro AS r INNER JOIN proclamatori AS p ON r.id_p = p.id $add ORDER BY `r`.`id` DESC") or die(mysqli_error($mysqli));	
 			$table="";
 			while($t=mysqli_fetch_assoc($sel_terr)){
 				if(empty($t)) {
