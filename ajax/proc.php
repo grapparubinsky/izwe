@@ -19,7 +19,7 @@ if (isset($_REQUEST['json']))
 		} elseif(isset($_GET['proclamatore'])) {
 		$sql_res=mysqli_query($mysqli, "SELECT id, nome, cognome FROM proclamatori WHERE nome LIKE '%{$_GET['proclamatore']}%' OR cognome LIKE '%{$_GET['proclamatore']}%'");
 			while($row=mysqli_fetch_array($sql_res)) {
-			   $value[]=$row['nome'].' '.$row['cognome'];
+			   $value[]=$row['cognome'].' '.$row['nome'];
 			  $id[]=$row['id'];
 		  }
 		}

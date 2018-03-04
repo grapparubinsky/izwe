@@ -41,6 +41,7 @@ if(!isset($_POST['id'])) {
 	};
 	var as_json = new AutoSuggest('proclamatore', options2);
 </script>
+
 <script>
 			function submitForm() {
 			    $_js.ajax({type:'GET', url: 'ajax/terr.php', data:$_js('#ajaxform').serialize(), success: function(response) {

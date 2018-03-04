@@ -1,7 +1,7 @@
 <?php
 $BASE_URL='http://'.$_SERVER['SERVER_NAME'].'';
 // connessione a MySQL con l'estensione MySQLi
-$mysqli = new mysqli("localhost", "root", "root", "izwe");
+$mysqli = new mysqli("localhost", "root", "admin", "izwe");
  
 // verifica dell'avvenuta connessione
 if (mysqli_connect_errno()) {

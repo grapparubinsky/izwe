@@ -1,6 +1,7 @@
 <?php
 include("../include/config.php");
 include('../include/functions.php');
+include('../include/terr_list.php');
 //echo '<pre>';
 //print_r($GLOBALS);
 //echo '</pre>';
@@ -183,7 +184,7 @@ $w='0';
 	<form id="griglianew">
 	<table style="table-layout:fixed; width:100%" cellspacing="0">	
 	<tr>
-			<th width="50">N.</th>
+			<th width="70">N.</th>
 			<th width="180">Proclamatore</th>
 			<th width="170">Data uscita</th>
 			<th width="40">R</th>
@@ -192,7 +193,12 @@ $w='0';
 			<th>Registra</th>
 		</tr>				
 			<tr>
-								<td><input style="width:30px" type="text"  name="territorio_n[$w]" value="" min="1" placeholder="N°"></td>
+								<!--td><input style="width:30px" type="text" id="territorio_n_input" name="territorio_n[$w]" value="" min="1" placeholder="N°"></td-->
+								<td>
+									<select required style="width:70px" name="territorio_n[$w]">
+										{$terr_list_select_options}
+									</select>
+								</td>
 								<td>{$p['nome']} {$p['cognome']} 
 								<td><input type="date"  name="data_uscita[$w]" value="" min="0" placeholder="Data uscita"></td>
 								<input type="hidden" name="r_uscita[$w]" value="0">
@@ -311,8 +317,16 @@ EOD;
 			$sqlexec='1';
 			
 		}
+	elseif(isset($_GET['usciti'])) {
+		                $update='';
+				                $campi_add="";
+				                $add= "WHERE (data_rientro IS NULL OR data_rientro = '0000-00-00')";
+						                $orderby="data_rientro DESC";
+						                $sqlexec='1';
+								        }
 
-		if($sqlexec=='1') {
+	
+	if($sqlexec=='1') {
 		
 		$sel_terr=mysqli_query($mysqli, "SELECT r.id as rid, r.id_p, territorio_n, DATE_FORMAT(data_uscita, '%d-%m-%Y') as data_uscita, 
 		DATE_FORMAT(data_rientro, '%d-%m-%Y') as data_rientro, r_uscita, r_rientro, note, p.id, p.nome, p.cognome{$campi_add} 
@@ -396,7 +410,7 @@ EOD;
 								
 								$table_td
 								<td>{$t['note']}</td>
-								<td>{$t['id']}</td>
+								<td>{$t['rid']}</td>
 							</tr>
 EOD;
 		$w++;

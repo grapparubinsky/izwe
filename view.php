@@ -3,12 +3,17 @@ $page="view";
 $title="Visualizza territori > IZWE";
 
 
-
 if(isset($_GET['territorio_n'])) {
+if(file_exists(__DIR__."/../territori/{$_GET['territorio_n']}.jpg")){
 	$Body=<<<EOD
 	<img width=100% src="{$BASE_URL}/territori/{$_GET['territorio_n']}.jpg" />
 EOD;
-	
+} else {
+	$Body=<<<EOD
+	<embed src="{$BASE_URL}/territori/{$_GET['territorio_n']}.pdf#view=FitH" type="application/pdf" width="100%" height="100%" />
+EOD;
+}
+
 } else {
 	$css_class="style='background:#D37700;color:#FFF'";
 include('include/config.php');
